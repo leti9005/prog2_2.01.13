@@ -31,13 +31,14 @@ class Editor
 
 
 		void saveToFile(const string& outputFileName) {
-			ofstream outputFile(outputFileName);
+			ofstream outputFile(outputFileName, ios_base::app);
 
 			if (outputFile.is_open()) {
 				for (int i = 0; i < this->index; i++) {
 					outputFile << this->text[i];
 				}
 
+				outputFile << endl;
 				outputFile.close();
 			}
 		};
@@ -51,13 +52,18 @@ class Editor
 int main () {
 	ifstream inputFile(input);
 
+	ofstream clearFile(output, ios_base::trunc);
+	clearFile.close();
+
 	if (inputFile.is_open()) {
 		string inputLine;
 
-		getline(inputFile, inputLine);
-		Editor line(inputLine);
-		inputFile.close();
+		while(getline(inputFile, inputLine)) {
+			Editor line(inputLine);
 
-		line.saveToFile(output);
+			line.saveToFile(output);
+
+		};
+		inputFile.close();
 	}
 }
