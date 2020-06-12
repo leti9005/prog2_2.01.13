@@ -50,6 +50,8 @@ class Editor
 
 
 int main () {
+	cout << "В тексте из файла ввода будут заменены все группы пробелов на одинарный, например, 'два  пробела' станет 'два пробела'\n"
+		<< "Результат будет записан в output.txt";
 	ifstream inputFile(input);
 
 	ofstream clearFile(output, ios_base::trunc);
@@ -60,10 +62,9 @@ int main () {
 
 		while(getline(inputFile, inputLine)) {
 			Editor line(inputLine);
-
 			line.saveToFile(output);
+		}
 
-		};
 		inputFile.close();
 	}
 }
