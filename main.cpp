@@ -11,7 +11,6 @@ class Editor
 	public:
 		Editor(string line) {
 			int i = 0;
-			bool prevSpace = false;
 
 			while ((int)line[i] != 0) {
 				bool push = true;
