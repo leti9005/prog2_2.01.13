@@ -11,6 +11,10 @@ struct String
 {
 	public:
 		void addChar(const char & inputChar) {
+			if (inputChar == '\n') {
+				return;
+			}
+
 			this->text[this->index] = inputChar;
 			this->index++;
 		}
@@ -70,8 +74,13 @@ struct String
 			if (outputFile.is_open()) {
 				int i = 0;
 
-				while (!this->isMarker(this->text[i])) {
+				while (i <= this->index) {
 					outputFile << this->text[i];
+
+					if (this->isMarker(this->text[i])) {
+						break;
+					}
+
 					i++;
 				}
 
