@@ -5,36 +5,74 @@ using namespace std;
 
 const char input[] = "input.txt";
 const char output[] = "output.txt";
+const int MAX_SIZE = 2000;
 
-class Editor
+struct String
 {
 	public:
-		Editor(string line) {
+		void addChar(const char & inputChar) {
+			this->text[this->index] = inputChar;
+			this->index++;
+		}
+
+
+		bool isMarker(const char & inputChar) {
+			return inputChar == this->marker;
+		}
+
+
+		void removeInnerSpaces() {
 			int i = 0;
 
-			while ((int)line[i] != 0) {
-				bool push = true;
+			int firstLetter = -1, lastLetter = -1;
 
-				if (line[i] == ' ' && this->index > 0 && this->text[this->index - 1] == ' ') {
-					push = false;
-				}
+			while (!this->isMarker(this->text[i])) {
+				if (this->text[i] != ' ') {
+					if (firstLetter == -1) {
+						firstLetter = i;
+					}
 
-				if (push) {
-					this->text[this->index] = line[i];
-					this->index++;
+					lastLetter = i;
 				}
 
 				i++;
 			}
-		};
+
+			int j = firstLetter + 1;
+
+			while (j <= lastLetter) {
+				if (this->text[j] == ' ' && this->text[j - 1] == ' ') {
+					this->shiftLeft(j);
+
+					lastLetter--;
+				} else {
+					j++;
+				}
+			}
+		}
+
+
+		void shiftLeft(int startIndex = 0) {
+			unsigned i = startIndex;
+
+			while(!this->isMarker(this->text[i])) {
+				this->text[i] = this->text[i+1];
+				i++;
+			}
+
+			this->index--;
+		}
 
 
 		void saveToFile(const string& outputFileName) {
 			ofstream outputFile(outputFileName, ios_base::app);
 
 			if (outputFile.is_open()) {
-				for (int i = 0; i < this->index; i++) {
+				int i = 0;
+
+				while (!this->isMarker(this->text[i])) {
 					outputFile << this->text[i];
+					i++;
 				}
 
 				outputFile << endl;
@@ -43,8 +81,9 @@ class Editor
 		};
 
 	private:
-		char text[0x255]{};
+		char text[MAX_SIZE]{};
 		int index = 0;
+		char marker = '@';
 };
 
 
@@ -56,14 +95,20 @@ int main () {
 	ofstream clearFile(output, ios_base::trunc);
 	clearFile.close();
 
-	if (inputFile.is_open()) {
-		string inputLine;
+	String line;
 
-		while(getline(inputFile, inputLine)) {
-			Editor line(inputLine);
-			line.saveToFile(output);
+	if (inputFile.is_open()) {
+		char inputChar;
+
+		while(inputFile >> noskipws >> inputChar) {
+			line.addChar(inputChar);
 		}
 
+		line.addChar('@');
 		inputFile.close();
 	}
+
+	line.removeInnerSpaces();
+
+	line.saveToFile(output);
 }
